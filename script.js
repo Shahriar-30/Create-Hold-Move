@@ -67,7 +67,12 @@
 //     window.removeEventListener('mouseup', getElement)
 // }
 // window.addEventListener('mouseup', removeElement)
+let move = false;
+let moveBtn = document.querySelector('.move');
 
+moveBtn.addEventListener('click', () => {
+    move = !move;
+})
 
 
 function randomColorCode() {
@@ -102,25 +107,33 @@ let container = document.querySelector('.container');
 btn.addEventListener('click', () => {
     var randomColor = randomColorCode();
     let html = document.createElement('div');
+    console.log(html);
     html.classList.add('dd');
     html.classList.add('box');
     html.style.backgroundColor = randomColor;
     container.appendChild(html);
-    makeDraggable(html);
+    makeDraggable(html)
 });
 
+
 function makeDraggable(element) {
-    let mouseDown = () => {
+    let mouseDown = (e) => {
+        if (!move) return;
+        console.log(e.target);
+        e.target.style.zIndex = "999";
+        let offsetX = e.clientX - element.getBoundingClientRect().left;
+        let offsetY = e.clientY - element.getBoundingClientRect().top;
         let mouseMove = (e) => {
-            let x = e.clientX - 100 + 'px';
-            let y = e.clientY - 100 + 'px';
+            let x = e.clientX - offsetX + 'px';
+            let y = e.clientY - offsetY + 'px';
             element.style.left = x;
             element.style.top = y;
         }
         element.addEventListener('mousemove', mouseMove);
 
-        let mouseUp = () => {
+        let mouseUp = (e) => {
             element.removeEventListener('mousemove', mouseMove);
+            e.target.style.zIndex = "1";
         }
         element.addEventListener('mouseup', mouseUp);
     }
